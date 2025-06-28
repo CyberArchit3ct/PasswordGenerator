@@ -95,9 +95,24 @@ if st.button("✨ Generate Password"):
         st.success("Your generated password:")
         st.code(password, language="")
 
-        # Copy to clipboard button
-        st.button("📋 Copy to Clipboard", on_click=st.experimental_set_query_params, args=({"pw": password},))
-        st.write("*(Copy manually if the button does not work in your browser.)*")
+        # Custom copy to clipboard button with JavaScript
+        copy_code = f"""
+        <button onclick="navigator.clipboard.writeText('{password}'); 
+                         var btn = this; btn.innerText='✅ Copied!'; 
+                         setTimeout(function(){{btn.innerText='📋 Copy to Clipboard';}}, 2000);"
+            style="
+                background-color: #667eea;
+                color: white;
+                padding: 0.5em 1em;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 1em;
+                margin-top: 10px;
+            ">📋 Copy to Clipboard</button>
+        """
+        st.markdown(copy_code, unsafe_allow_html=True)
+        st.write("*(Copied password will be available in your clipboard.)*")
 
         # Password strength
         score = password_strength(password)
@@ -105,7 +120,7 @@ if st.button("✨ Generate Password"):
         st.progress(score / 5)
         st.markdown(f"**Strength:** {icon} {label}")
 
-        # Animation for strong password
+        # Toast for strong passwords
         if score >= 4:
             st.toast("✅ Strong password generated!", icon="🔒")
     else:
