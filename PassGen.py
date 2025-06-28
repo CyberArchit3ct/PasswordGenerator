@@ -107,7 +107,7 @@ if st.button("✨ Generate Password"):
 
         # Animation for strong password
         if score >= 4:
-    st.toast("✅ Strong password generated!", icon="🔒")
+            st.toast("✅ Strong password generated!", icon="🔒")
     else:
         st.error("No character types selected. Please adjust your options.")
 else:
