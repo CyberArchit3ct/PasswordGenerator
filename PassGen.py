@@ -133,6 +133,6 @@ else:
 st.markdown("""
     <hr>
     <div style="text-align:center; color: #888;">
-        <small>Made for fun | <a href="https://github.com/CyberArchit3ct" target="_blank">My GitHub</a></small>
+        <small>Made for fun | <a href="https://github.com/CyberArchit3ct" target="_blank">My GitHub - CyberArchit3ct</a></small>
     </div>
 """, unsafe_allow_html=True)
