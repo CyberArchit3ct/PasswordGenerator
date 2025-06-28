@@ -38,6 +38,7 @@ six==1.17.0
 smmap==5.0.2
 streamlit==1.46.1
 streamlit-authenticator==0.4.2
+streamlit-copy-to-clipboard==0.0.1
 tenacity==9.1.2
 toml==0.10.2
 tornado==6.5.1
