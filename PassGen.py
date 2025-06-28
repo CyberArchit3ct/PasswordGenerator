@@ -1,7 +1,7 @@
 import streamlit as st
 import string
 import secrets
-# from streamlit_copy_to_clipboard import st_copy_to_clipboard # type: ignore
+import streamlit.components.v1 as components
 
 # --- Helper Functions ---
 def generate_password(length, use_upper, use_lower, use_digits, use_symbols):
@@ -33,7 +33,6 @@ def password_strength(password):
         score += 1
     if any(c in string.punctuation for c in password):
         score += 1
-
     return score
 
 def strength_label(score):
@@ -46,31 +45,8 @@ def strength_label(score):
     else:
         return "Excellent", "🌟"
 
-# --- Streamlit App ---
+# --- Streamlit UI ---
 st.set_page_config(page_title="Password Generator", page_icon="🔐", layout="centered")
-
-st.markdown(
-    """
-    <style>
-    .main {
-        background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
-    }
-    .stButton>button {
-        color: white;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        border-radius: 8px;
-        border: none;
-        padding: 0.5em 2em;
-        font-weight: bold;
-        font-size: 1.1em;
-    }
-    .stSlider>div>div>div>div {
-        background: #667eea;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 
 st.title("🔐 Beautiful Password Generator")
 st.write(
@@ -96,23 +72,33 @@ if st.button("✨ Generate Password"):
         st.success("Your generated password:")
         st.code(password, language="")
 
-        # Custom copy to clipboard button with JavaScript
-        copy_code = f"""
-        <button onclick="navigator.clipboard.writeText('{password}'); 
-                         var btn = this; btn.innerText='✅ Copied!'; 
-                         setTimeout(function(){{btn.innerText='📋 Copy to Clipboard';}}, 2000);"
-            style="
-                background-color: #667eea;
-                color: white;
-                padding: 0.5em 1em;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: 1em;
-                margin-top: 10px;
-            ">📋 Copy to Clipboard</button>
-        """
-        st.markdown(copy_code, unsafe_allow_html=True)
+        # ✅ Reliable copy to clipboard using navigator.clipboard API
+        escaped_password = password.replace("\\", "\\\\").replace("'", "\\'")
+        components.html(f"""
+            <script>
+                function copyPassword() {{
+                    navigator.clipboard.writeText('{escaped_password}').then(function() {{
+                        const btn = document.getElementById('copy-btn');
+                        btn.innerText = '✅ Copied!';
+                        setTimeout(() => btn.innerText = '📋 Copy to Clipboard', 2000);
+                    }});
+                }}
+            </script>
+            <button id="copy-btn" onclick="copyPassword()"
+                style="
+                    background-color: #667eea;
+                    color: white;
+                    padding: 0.5em 1em;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    font-size: 1em;
+                    margin-top: 10px;
+                ">
+                📋 Copy to Clipboard
+            </button>
+        """, height=70)
+
         st.write("*(Copied password will be available in your clipboard.)*")
 
         # Password strength
@@ -121,7 +107,6 @@ if st.button("✨ Generate Password"):
         st.progress(score / 5)
         st.markdown(f"**Strength:** {icon} {label}")
 
-        # Toast for strong passwords
         if score >= 4:
             st.toast("✅ Strong password generated!", icon="🔒")
     else:
